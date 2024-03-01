@@ -1,4 +1,4 @@
-package com.bezkoder.spring.security.postgresql.payload.request;
+package com.findmy.findmybe.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,19 +1,17 @@
-package com.bezkoder.spring.security.postgresql.security.jwt;
+package com.findmy.findmybe.security.jwt;
 
-import java.security.Key;
-import java.util.Date;
-
+import com.findmy.findmybe.security.services.UserDetailsImpl;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.bezkoder.spring.security.postgresql.security.services.UserDetailsImpl;
-
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Date;
 
 @Component
 public class JwtUtils {
