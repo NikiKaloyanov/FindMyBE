@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Setter
 @Getter
 @Entity
@@ -38,6 +41,9 @@ public class User {
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private LocationCoordinates lastLocation;
 
+    @OneToMany(mappedBy = "reader", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SharedIdAndStatus> sharedIdAndStatuses;
+
     public User() {
     }
 
@@ -45,5 +51,8 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.sharedIdAndStatuses = new ArrayList<>();
+        SharedIdAndStatus a = new SharedIdAndStatus();
+        this.sharedIdAndStatuses.add(a);
     }
 }

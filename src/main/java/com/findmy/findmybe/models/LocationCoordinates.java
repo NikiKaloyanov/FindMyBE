@@ -1,9 +1,6 @@
 package com.findmy.findmybe.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,8 +14,10 @@ public class LocationCoordinates {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(precision=10, scale=6)
     private BigDecimal latitude;
 
+    @Column(precision=10, scale=6)
     private BigDecimal longitude;
 
     public LocationCoordinates() {}
