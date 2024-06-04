@@ -86,8 +86,8 @@ public class UserDataService implements UserDataInterface {
 
         return new UserLocation(
                 sender.getUsername(),
-                sender.getLastLocation().getLatitude().toString(),
-                sender.getLastLocation().getLongitude().toString()
+                sender.getLastLocation().getLatitude(),
+                sender.getLastLocation().getLongitude()
         );
     }
 
@@ -103,21 +103,56 @@ public class UserDataService implements UserDataInterface {
     }
 
     private PendingLocation mapperToPendingLocation(Long requesterId) {
+        User requester = userRepository.findById(requesterId).orElseThrow(
+                () -> new UsernameNotFoundException("User Not Found with id: " + requesterId)
+        );
 
-
-        return new PendingLocation() ;
+        return new PendingLocation(requester.getUsername());
     }
 
     @Override
-    public List<PendingLocation> getPendingLocations(String sender) {
-        User reviewer = userRepository.findByUsername(sender).orElseThrow(
-                () -> new UsernameNotFoundException("User Not Found with username: " + sender)
+    public List<PendingLocation> getPendingLocations(String reviewerName) {
+        User reviewer = userRepository.findByUsername(reviewerName).orElseThrow(
+                () -> new UsernameNotFoundException("User Not Found with username: " + reviewerName)
         );
 
-        return reviewer.getSharedIdAndStatuses()
+        List<SharedIdAndStatus> sharedIdAndStatuses = sharedLocationsRepository.findBySenderId(reviewer.getId()).orElseThrow(
+                () -> new UsernameNotFoundException("Locations not found for reviewer: " + reviewerName)
+        );
+
+        return sharedIdAndStatuses
                 .stream().filter(SharedIdAndStatus::getIsPending)
                 .map(it -> mapperToPendingLocation(it.getReader().getId()))
                 .toList();
+    }
+
+    @Override
+    public void acceptDeclinePendingLocation(String sender, String reader, Boolean decision) {
+        User senderUser = userRepository.findByUsername(sender).orElseThrow(
+                () -> new UsernameNotFoundException("User Not Found with username: " + sender)
+        );
+
+        User reviewer = userRepository.findByUsername(reader).orElseThrow(
+                () -> new UsernameNotFoundException("User Not Found with username: " + reader)
+        );
+
+        List<SharedIdAndStatus> sharedIdAndStatuses = sharedLocationsRepository.findBySenderId(senderUser.getId()).orElseThrow(
+                () -> new UsernameNotFoundException("Locations not found for reviewer: " + senderUser)
+        );
+
+        SharedIdAndStatus temp = sharedIdAndStatuses.stream()
+                .filter(it -> it.getIsPending() && it.getSenderId().equals(senderUser.getId()))
+                .filter(it -> it.getReader().getId().equals(reviewer.getId()))
+                .findAny().orElse(null);
+
+        if (temp != null) {
+            if (decision) {
+                temp.setIsPending(false);
+                sharedLocationsRepository.save(temp);
+            } else {
+                sharedLocationsRepository.deleteById(temp.getId());
+            }
+        }
     }
 
 }

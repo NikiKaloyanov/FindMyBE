@@ -7,4 +7,8 @@ import lombok.Setter;
 @Setter
 public class PendingLocation {
     private String username;
+
+    public PendingLocation(String username) {
+        this.username = username;
+    }
 }

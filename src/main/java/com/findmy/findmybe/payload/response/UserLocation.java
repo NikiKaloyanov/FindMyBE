@@ -3,16 +3,18 @@ package com.findmy.findmybe.payload.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Setter
 @Getter
 public class UserLocation {
     private String username;
-    private String latitude;
-    private String longitude;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
 
     public UserLocation() {};
 
-    public UserLocation(String username, String latitude, String longitude) {
+    public UserLocation(String username, BigDecimal latitude, BigDecimal longitude) {
         this.username = username;
         this.latitude = latitude;
         this.longitude = longitude;

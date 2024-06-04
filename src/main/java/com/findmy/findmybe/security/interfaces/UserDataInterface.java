@@ -14,4 +14,6 @@ public interface UserDataInterface {
     List<UserLocation> getKnownLocations(String caller);
 
     List<PendingLocation> getPendingLocations(String sender);
+
+    void acceptDeclinePendingLocation(String sender, String reader, Boolean decision);
 }
