@@ -11,13 +11,15 @@ public class UserLocation {
     private String username;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private String message;
 
-    public UserLocation() {};
+    public UserLocation() {}
 
-    public UserLocation(String username, BigDecimal latitude, BigDecimal longitude) {
+    public UserLocation(String username, BigDecimal latitude, BigDecimal longitude, String message) {
         this.username = username;
         this.latitude = latitude;
         this.longitude = longitude;
-    };
+        this.message = message;
+    }
 
 }

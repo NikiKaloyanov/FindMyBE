@@ -55,6 +55,7 @@ public class UserDataService implements UserDataInterface {
                 locationRepository.save(tempLocation);
             }
         }
+        logger.info("Location saved user: {}", username);
     }
 
     @Override
@@ -75,8 +76,8 @@ public class UserDataService implements UserDataInterface {
         temp.add(sharedIdAndStatus);
         reader.setSharedIdAndStatuses(temp);
 
-
         userRepository.save(reader);
+        logger.info("New shared location added: {}", caller);
     }
 
     private UserLocation mapperToUserLocation(SharedIdAndStatus sharedIdAndStatus) {
@@ -87,7 +88,8 @@ public class UserDataService implements UserDataInterface {
         return new UserLocation(
                 sender.getUsername(),
                 sender.getLastLocation().getLatitude(),
-                sender.getLastLocation().getLongitude()
+                sender.getLastLocation().getLongitude(),
+                sender.getMessage()
         );
     }
 
@@ -96,6 +98,7 @@ public class UserDataService implements UserDataInterface {
         User reader = userRepository.findByUsername(caller).orElseThrow(
                 () -> new UsernameNotFoundException("User Not Found with username: " + caller)
         );
+        logger.info("Fetched known locations for user: {}", caller);
 
         return reader.getSharedIdAndStatuses()
                 .stream().filter(it -> !it.getIsPending())
@@ -119,6 +122,8 @@ public class UserDataService implements UserDataInterface {
         List<SharedIdAndStatus> sharedIdAndStatuses = sharedLocationsRepository.findBySenderId(reviewer.getId()).orElseThrow(
                 () -> new UsernameNotFoundException("Locations not found for reviewer: " + reviewerName)
         );
+
+        logger.info("Fetched pending locations for user: {}", reviewerName);
 
         return sharedIdAndStatuses
                 .stream().filter(SharedIdAndStatus::getIsPending)
@@ -149,10 +154,23 @@ public class UserDataService implements UserDataInterface {
             if (decision) {
                 temp.setIsPending(false);
                 sharedLocationsRepository.save(temp);
+                logger.info("Accepted pending location for : {}", reader);
             } else {
                 sharedLocationsRepository.deleteById(temp.getId());
+                logger.info("Deleted pending location for : {}", sender);
             }
         }
+    }
+
+    @Override
+    public void setMessage(String user, String message) {
+        User senderUser = userRepository.findByUsername(user).orElseThrow(
+                () -> new UsernameNotFoundException("User Not Found with username: " + user)
+        );
+
+        senderUser.setMessage(message);
+        userRepository.save(senderUser);
+        logger.info("Set message for user : {}", user);
     }
 
 }

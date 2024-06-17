@@ -44,6 +44,8 @@ public class User {
     @OneToMany(mappedBy = "reader", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SharedIdAndStatus> sharedIdAndStatuses;
 
+    private String message;
+
     public User() {
     }
 

@@ -1,9 +1,6 @@
 package com.findmy.findmybe.controllers;
 
-import com.findmy.findmybe.payload.request.AcceptDeclineDecision;
-import com.findmy.findmybe.payload.request.Caller;
-import com.findmy.findmybe.payload.request.SaveLocationRequest;
-import com.findmy.findmybe.payload.request.ShareLocationRequest;
+import com.findmy.findmybe.payload.request.*;
 import com.findmy.findmybe.payload.response.PendingLocation;
 import com.findmy.findmybe.payload.response.UserLocation;
 import com.findmy.findmybe.security.interfaces.UserDataInterface;
@@ -52,6 +49,12 @@ public class LocationController {
     public ResponseEntity<String> acceptDeclinePendingLocation(@Valid @RequestBody AcceptDeclineDecision decision) {
         userDataInterface.acceptDeclinePendingLocation(decision.getSender(), decision.getReader(), decision.getDecision());
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/setMessage")
+    public ResponseEntity<String> setUserMessage(@Valid @RequestBody MessageSetter messageSetter) {
+        userDataInterface.setMessage(messageSetter.getUser(), messageSetter.getMessage());
+        return ResponseEntity.ok("Success");
     }
 
 }
