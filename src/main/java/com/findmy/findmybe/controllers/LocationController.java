@@ -57,4 +57,11 @@ public class LocationController {
         return ResponseEntity.ok("Success");
     }
 
+    @PostMapping("deleteSharedLocation")
+    public ResponseEntity<String> deleteSharedLocation(@Valid @RequestBody DeleteRequest deleteRequest) {
+        userDataInterface.deleteSharedLocation(deleteRequest.getSender(), deleteRequest.getReader());
+        return ResponseEntity.ok("Deleted");
+    }
+
+
 }

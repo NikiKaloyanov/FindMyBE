@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -171,6 +172,31 @@ public class UserDataService implements UserDataInterface {
         senderUser.setMessage(message);
         userRepository.save(senderUser);
         logger.info("Set message for user : {}", user);
+    }
+
+    @Override
+    public void deleteSharedLocation(String sender, String reader) {
+        User sendingUser = userRepository.findByUsername(sender).orElseThrow(
+                () -> new UsernameNotFoundException("User Not Found with username: " + sender)
+        );
+
+        User readingUser = userRepository.findByUsername(reader).orElseThrow(
+                () -> new UsernameNotFoundException("User Not Found with username: " + reader)
+        );
+
+        List<SharedIdAndStatus> sharedIdAndStatusList = sharedLocationsRepository.findAll();
+
+        SharedIdAndStatus temp = sharedIdAndStatusList.stream()
+                .filter(it ->
+                        Objects.equals(it.getReader(), readingUser) &&
+                                Objects.equals(it.getSenderId(), sendingUser.getId())
+                        )
+                .toList()
+                .getFirst();
+
+        sharedLocationsRepository.deleteById(temp.getId());
+
+        logger.info("Deleted shared location bi-directionally : {}", reader);
     }
 
 }
